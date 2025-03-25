@@ -14,5 +14,5 @@ function checkGuess() {
         document.getElementById('result').textContent = "Tebakanmu terlalu tinggi!";
     }
 
-    document.getElementById('attempts').textContent = `Percobaan: ${attempts}`;
+    document.getElementById('attempts').textContent = `Jawaban: ${secretNumber}`;
 }
