@@ -7,12 +7,12 @@ function checkGuess() {
 
     if (guess == secretNumber) {
         document.getElementById('result').textContent = `Selamat! Kamu menebak dengan benar. Angka yang benar adalah ${secretNumber}.`;
-        document.getElementById('attempts').textContent = `Percobaan: ${attempts}`;
+        document.getElementById('attempts').textContent = `Percobaan: ${attempts}<br>Jawaban: ${secretNumber}`;
     } else if (guess < secretNumber) {
         document.getElementById('result').textContent = "Tebakanmu terlalu rendah!";
     } else if (guess > secretNumber) {
         document.getElementById('result').textContent = "Tebakanmu terlalu tinggi!";
     }
 
-    document.getElementById('attempts').textContent = `Jawaban: ${secretNumber}`;
+    document.getElementById('attempts').textContent = `Percobaan: ${attempts}`;
 }
