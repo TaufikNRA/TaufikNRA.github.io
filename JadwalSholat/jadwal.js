@@ -65,9 +65,9 @@ function tampilkanJadwal(lat, lon) {
 
             const [tgl, blnEn, thn] = readableDate.split(" ");
             const tanggalIndo = `${hariMap[weekdayEn]}, ${tgl} ${bulanMap[blnEn]} ${thn}`;
-            document.getElementById("tanggal").innerText = tanggalIndo;
             document.getElementById("jadwal").style.transform = "translateX(-5%)";
-            document.getElementById("sholat-times").innerHTML = `
+            document.getElementById("tanggal").innerText = tanggalIndo;
+            document.getElementById("jam-digital").style.display = "block";
              <div><strong>${waktu.Fajr}</strong><br>Subuh</div>
              <div><strong>${waktu.Dhuhr}</strong><br>Dzuhur</div>
              <div><strong>${waktu.Asr}</strong><br>Ashar</div>
