@@ -11,20 +11,20 @@ window.onload = function() {
         });
     }
 
-  if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-          tampilkanJadwal(lat, lon);
-          ambilNamaKota(lat, lon);
-         },
-        () => {
-          document.getElementById("tanggal").innerHTML =
-            "<span style='color:red'>Izin lokasi ditolak. Jadwal tidak dapat ditampilkan.</span>";
-        }
-      );
-  }
+    if (navigator.geolocation) {
+       navigator.geolocation.getCurrentPosition(
+         pos => {
+           const lat = pos.coords.latitude;
+           const lon = pos.coords.longitude;
+           tampilkanJadwal(lat, lon);
+           ambilNamaKota(lat, lon);
+          },
+         () => {
+           document.getElementById("tanggal").innerHTML =
+             "<span style='color:red'>Izin lokasi ditolak. Jadwal tidak dapat ditampilkan.</span>";
+         }
+       );
+    }
 }
 
 function tampilkanJadwal(lat, lon) {
