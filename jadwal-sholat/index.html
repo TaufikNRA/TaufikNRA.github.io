@@ -1,1 +1,124 @@
-jadwal sholat Indonesia
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jadwal Sholat</title>
+  <style>
+    body {
+      background: #000020;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    .glow {
+      color: #f0f;
+      font-size: 32px;
+      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #f0f;
+    }
+    .jadwal-box {
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 20px;
+      background-color: #001122;
+      display: inline-block;
+    }
+    .jadwal-box h3 {
+      margin: 10px 0;
+      color: #0ff;
+    }
+    .sholat-time {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .sholat-time div {
+      background-color: #000;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #0ff;
+    }
+    select, button {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background-color: #0ff;
+      color: #000;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="glow">Jadwal Sholat</div>  <div>
+    <label for="lokasi">Pilih Lokasi:</label>
+    <select id="lokasi">
+      <option value="-6.2,106.816666">Jakarta</option>
+      <option value="-7.8,110.367">Yogyakarta</option>
+      <option value="-6.9,107.6">Bandung</option>
+      <option value="-7.25,112.75">Surabaya</option>
+      <option value="-5.147665,119.432732">Makassar</option>
+      <option value="-0.9471,100.4172">Padang</option>
+      <option value="-3.3,114.6">Banjarmasin</option>
+      <option value="-0.5,117.15">Samarinda</option>
+      <option value="1.4927,124.8486">Manado</option>
+      <option value="3.6,98.67">Medan</option>
+      <option value="-8.65,115.216667">Denpasar</option>
+    </select>
+    <button onclick="getJadwal()">Tampilkan Jadwal</button>
+  </div>  <div class="jadwal-box" id="jadwal">
+    <h3>JADWAL SHOLAT</h3>
+    <div id="tanggal"></div>
+    <div class="sholat-time" id="sholat-times"></div>
+  </div>  <script>
+    window.onload = function() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            tampilkanJadwal(lat, lon);
+          },
+          () => {
+            console.warn("Lokasi ditolak, silakan pilih manual.");
+          }
+        );
+      }
+    }
+
+    function getJadwal() {
+      const lokasi = document.getElementById("lokasi").value.split(',');
+      tampilkanJadwal(lokasi[0], lokasi[1]);
+    }
+
+    function tampilkanJadwal(lat, lon) {
+      fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.code === 200) {
+            const waktu = data.data.timings;
+            const date = data.data.date.readable;
+            document.getElementById("tanggal").innerText = date;
+
+            document.getElementById("sholat-times").innerHTML = `
+              <div><strong>${waktu.Fajr}</strong><br>Subuh</div>
+              <div><strong>${waktu.Dhuhr}</strong><br>Dzhuhur</div>
+              <div><strong>${waktu.Asr}</strong><br>Ashar</div>
+              <div><strong>${waktu.Maghrib}</strong><br>Maghrib</div>
+              <div><strong>${waktu.Isha}</strong><br>Isya</div>
+            `;
+          } else {
+            document.getElementById("sholat-times").innerHTML = "<span style='color:red'>Gagal memuat jadwal.</span>";
+          }
+        })
+        .catch(() => {
+          document.getElementById("sholat-times").innerHTML = "<span style='color:red'>Tidak dapat terhubung ke server.</span>";
+        });
+    }
+  </script></body>
+</html>
