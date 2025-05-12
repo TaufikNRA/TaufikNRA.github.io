@@ -33,9 +33,28 @@ function tampilkanJadwal(lat, lon) {
         .then(data => {
         if (data.code === 200) {
             const waktu = data.data.timings;
-            const date = data.data.date.readable;
-            document.getElementById("tanggal").innerText = date;
+            const readableDate = data.data.date.readable;
+            const weekdayEn = data.data.date.gregorian.weekday.en;
 
+            const hariMap = {
+              "Monday": "Senin",
+              "Tuesday": "Selasa",
+              "Wednesday": "Rabu",
+              "Thursday": "Kamis",
+              "Friday": "Jumat",
+              "Saturday": "Sabtu",
+              "Sunday": "Minggu"
+            };
+
+            const bulanMap = {
+              "Jan": "Januari", "Feb": "Februari", "Mar": "Maret", "Apr": "April",
+              "May": "Mei", "Jun": "Juni", "Jul": "Juli", "Aug": "Agustus",
+              "Sep": "September", "Oct": "Oktober", "Nov": "November", "Dec": "Desember"
+            };
+
+            const [tgl, blnEn, thn] = readableDate.split(" ");
+            const tanggalIndo = `${hariMap[weekdayEn]}, ${tgl} ${bulanMap[blnEn]} ${thn}`;
+            document.getElementById("tanggal").innerText = tanggalIndo;
             document.getElementById("sholat-times").innerHTML = `
              <div><strong>${waktu.Fajr}</strong><br>Subuh</div>
              <div><strong>${waktu.Dhuhr}</strong><br>Dzuhur</div>
