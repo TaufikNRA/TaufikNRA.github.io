@@ -68,12 +68,13 @@ function tampilkanJadwal(lat, lon) {
             document.getElementById("jadwal").style.transform = "translateX(-5%)";
             document.getElementById("tanggal").innerText = tanggalIndo;
             document.getElementById("jam-digital").style.display = "block";
-             <div><strong>${waktu.Fajr}</strong><br>Subuh</div>
-             <div><strong>${waktu.Dhuhr}</strong><br>Dzuhur</div>
-             <div><strong>${waktu.Asr}</strong><br>Ashar</div>
-             <div><strong>${waktu.Maghrib}</strong><br>Maghrib</div>
-             <div><strong>${waktu.Isha}</strong><br>Isya</div>
-             `;
+            document.getElementById("sholat-times").innerHTML = `
+                <div><strong>${waktu.Fajr}</strong><br>Subuh</div>
+                <div><strong>${waktu.Dhuhr}</strong><br>Dzuhur</div>
+                <div><strong>${waktu.Asr}</strong><br>Ashar</div>
+                <div><strong>${waktu.Maghrib}</strong><br>Maghrib</div>
+                <div><strong>${waktu.Isha}</strong><br>Isya</div>
+                `;
         } else {
             document.getElementById("tanggal").innerHTML =
              "<span style='color:red'>Gagal memuat jadwal.</span>";
