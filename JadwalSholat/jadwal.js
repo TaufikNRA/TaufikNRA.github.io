@@ -27,11 +27,22 @@ window.onload = function() {
     }
 }
 
+function updateJam() {
+  const now = new Date();
+  const jam = now.getHours().toString().padStart(2, '0');
+  const menit = now.getMinutes().toString().padStart(2, '0');
+  const detik = now.getSeconds().toString().padStart(2, '0');
+  document.getElementById("jam-digital").innerText = `${jam}:${menit}:${detik}`;
+}
+
+setInterval(updateJam, 1000);
+
 function tampilkanJadwal(lat, lon) {
     fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`)
         .then(res => res.json())
         .then(data => {
         if (data.code === 200) {
+            updateJam();
             const waktu = data.data.timings;
             const readableDate = data.data.date.readable;
             const weekdayEn = data.data.date.gregorian.weekday.en;
