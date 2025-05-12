@@ -1,3 +1,13 @@
+function updateJam() {
+    const now = new Date();
+    const jam = now.getHours().toString().padStart(2, '0');
+    const menit = now.getMinutes().toString().padStart(2, '0');
+    const detik = now.getSeconds().toString().padStart(2, '0');
+    document.getElementById("jam-digital").innerText = `${jam}:${menit}:${detik}`;
+}
+
+setInterval(updateJam, 1000);
+
 window.onload = function() {
     function ambilNamaKota(lat, lon) {
       fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
@@ -25,17 +35,7 @@ window.onload = function() {
          }
        );
     }
-
-    function updateJam() {
-          const now = new Date();
-          const jam = now.getHours().toString().padStart(2, '0');
-          const menit = now.getMinutes().toString().padStart(2, '0');
-          const detik = now.getSeconds().toString().padStart(2, '0');
-          document.getElementById("jam-digital").innerText = `${jam}:${menit}:${detik}`;
-    }
-
     updateJam();
-    setInterval(updateJam, 1000);
 }
 
 function tampilkanJadwal(lat, lon) {
