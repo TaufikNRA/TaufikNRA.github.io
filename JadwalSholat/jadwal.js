@@ -22,6 +22,7 @@ window.onload = function() {
                 document.getElementById("kota").innerText = `${kota}`;
             })
             .catch(() => {
+                document.getElementById("loading").style.display = "none";
                 document.getElementById("error-message").innerText =
                     "<span style='color:red'>Gagal memuat jadwal.</span>";"Lokasi tidak ditemukan.";
                 document.getElementById("error-message").style.display = "block";
@@ -37,6 +38,7 @@ window.onload = function() {
                 ambilNamaKota(lat, lon);
             },
             () => {
+                document.getElementById("loading").style.display = "none";
                 document.getElementById("error-message").innerHTML =
                     "<span style='color:red'>Izin lokasi ditolak. Jadwal tidak dapat ditampilkan.</span>";
                 document.getElementById("error-message").style.display = "block";
@@ -87,12 +89,14 @@ function tampilkanJadwal(lat, lon) {
                 <div><strong>${waktu.Isha}</strong><br>Isya</div>
                 `;
         } else {
+            document.getElementById("loading").style.display = "none";
             document.getElementById("error-message").innerHTML =
                 "<span style='color:red'>Gagal memuat jadwal.</span>";
             document.getElementById("error-message").style.display = "block";
         }
         })
         .catch(() => {
+            document.getElementById("loading").style.display = "none";
             document.getElementById("error-message").innerHTML =
                 "<span style='color:red'>Tidak dapat terhubung ke server.</span>";
             document.getElementById("error-message").style.display = "block";
