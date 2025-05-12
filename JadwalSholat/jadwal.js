@@ -35,6 +35,7 @@ function updateJam() {
   document.getElementById("jam-digital").innerText = `${jam}:${menit}:${detik}`;
 }
 
+updateJam();
 setInterval(updateJam, 1000);
 
 function tampilkanJadwal(lat, lon) {
@@ -42,7 +43,6 @@ function tampilkanJadwal(lat, lon) {
         .then(res => res.json())
         .then(data => {
         if (data.code === 200) {
-            updateJam();
             const waktu = data.data.timings;
             const readableDate = data.data.date.readable;
             const weekdayEn = data.data.date.gregorian.weekday.en;
