@@ -74,6 +74,7 @@ function tampilkanJadwal(lat, lon) {
             const [tgl, blnEn, thn] = readableDate.split(" ");
             const tanggalIndo = `${hariMap[weekdayEn]}, ${tgl} ${bulanMap[blnEn]} ${thn}`;
             document.getElementById("jadwal").style.transform = "translateX(-5%)";
+            document.getElementById("loading").style.display = "none";
             document.getElementById("kota").style.display = "block";
             document.getElementById("tanggal").innerText = tanggalIndo;
             document.getElementById("tanggal").style.display = "block";
