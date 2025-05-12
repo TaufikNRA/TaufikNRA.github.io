@@ -4,7 +4,7 @@ window.onload = function() {
         .then(res => res.json())
         .then(data => {
           const kota = data.address.city || data.address.town || data.address.village || data.address.county || "Lokasi Tidak Dikenal";
-          document.getElementById("kota").innerText = `Lokasi: ${kota}`;
+          document.getElementById("kota").innerText = `${kota}`;
         })
         .catch(() => {
           document.getElementById("kota").innerText = "Lokasi tidak ditemukan.";
@@ -55,6 +55,7 @@ function tampilkanJadwal(lat, lon) {
             const [tgl, blnEn, thn] = readableDate.split(" ");
             const tanggalIndo = `${hariMap[weekdayEn]}, ${tgl} ${bulanMap[blnEn]} ${thn}`;
             document.getElementById("tanggal").innerText = tanggalIndo;
+            document.getElementById("jadwal").style.transform = "translateX(-5%)";
             document.getElementById("sholat-times").innerHTML = `
              <div><strong>${waktu.Fajr}</strong><br>Subuh</div>
              <div><strong>${waktu.Dhuhr}</strong><br>Dzuhur</div>
