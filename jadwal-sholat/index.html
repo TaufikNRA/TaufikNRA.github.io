@@ -143,7 +143,7 @@
     }
 
     function tampilkanJadwal(lat, lon) {
-        fetch(`https://papi.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`)
+        fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`)
             .then(res => res.json())
             .then(data => {
             if (data.code === 200) {
