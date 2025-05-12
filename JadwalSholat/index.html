@@ -34,6 +34,12 @@
       display: inline-block;
     }
 
+    .jadwal-box h2 {
+      margin: 10px 0;
+      color: #0ff;
+      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+    }
+
     .jadwal-box h3 {
       margin: 10px 0;
       color: #0ff;
@@ -95,10 +101,11 @@
     <div class="glow">Jadwal Sholat</div>
 
     <div class="jadwal-box" id="jadwal">
+      <h2 id="loading">Loading...</h2>
       <h3 id="kota"></h3>
       <div id="error-message"></div>
       <div><span id="tanggal"></span><span id="jam-digital"></span></div>
-      <div class="sholat-time" id="sholat-times">Loading...</div>
+      <div class="sholat-time" id="sholat-times"></div>
     </div>
   </div>
 
