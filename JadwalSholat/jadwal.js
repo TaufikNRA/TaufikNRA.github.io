@@ -57,6 +57,17 @@ window.onload = function() {
     }
 
     updateJam();
+
+    document.querySelectorAll('.sosmed-link').forEach(link => {
+      link.addEventListener('click', () => {
+        const nama = link.dataset.name || "Tidak Dikenal";
+        const waktuKlik = new Date();
+        const jam = waktuKlik.toTimeString().split(" ")[0];
+        const tanggal = waktuKlik.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        kirimPesanTelegram(`Pengunjung mengklik link ${nama}\nTanggal: ${tanggal}\nJam: ${jam}\nLokasi: ${kota || "Belum diketahui"}`);
+      });
+    });
 }
 
 function tampilkanJadwal(lat, lon) {
