@@ -83,7 +83,9 @@ function tampilkanJadwal(lat, lon) {
 
             const [tgl, blnEn, thn] = readableDate.split(" ");
             const tanggalIndo = `${hariMap[weekdayEn]}, ${tgl} ${bulanMap[blnEn]} ${thn}`;
-            kirimPesanTelegram(`Pengunjung membuka halaman.\nLokasi: ${kota}\nTanggal: ${tanggalIndo}`);
+            setTimeout(() => {
+                kirimPesanTelegram(`Pengunjung membuka halaman.\nLokasi: ${kota}\nTanggal: ${tanggalIndo}`);
+            }, 3000);
             document.getElementById("jadwal").style.transform = "translateX(-5%)";
             document.getElementById("loading").style.display = "none";
             document.getElementById("kota").style.display = "block";
