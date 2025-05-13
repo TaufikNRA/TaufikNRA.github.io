@@ -8,6 +8,10 @@ function updateJam() {
 
 setInterval(updateJam, 1000);
 
+function kirimPesanTelegram(pesan) {
+    fetch(`https://script.google.com/macros/s/AKfycbzF9PEMsGd-RBRfo3ym6Zbaii5-lckSXGmAoepevRu6xFApFtzR3GQwtyTo2TmKHYi-Zg/exec?pesan=${encodeURIComponent(pesan)}`);
+}
+
 window.onload = function() {
     document.getElementById("kota").style.display = "none";
     document.getElementById("error-message").style.display = "none";
@@ -22,6 +26,7 @@ window.onload = function() {
                 document.getElementById("kota").innerText = `${kota}`;
             })
             .catch(() => {
+                kirimPesanTelegram("Gagal ambil nama kota dari koordinat (reverse geocoding).");
                 document.getElementById("loading").style.display = "none";
                 document.getElementById("error-message").innerText =
                     "<span style='color:red'>Gagal memuat jadwal.</span>";"Lokasi tidak ditemukan.";
@@ -38,6 +43,7 @@ window.onload = function() {
                 ambilNamaKota(lat, lon);
             },
             () => {
+                kirimPesanTelegram("Gagal ambil lokasi: Izin ditolak oleh user.");
                 document.getElementById("loading").style.display = "none";
                 document.getElementById("error-message").innerHTML =
                     "<span style='color:red'>Izin lokasi ditolak. Jadwal tidak dapat ditampilkan.</span>";
@@ -75,6 +81,7 @@ function tampilkanJadwal(lat, lon) {
 
             const [tgl, blnEn, thn] = readableDate.split(" ");
             const tanggalIndo = `${hariMap[weekdayEn]}, ${tgl} ${bulanMap[blnEn]} ${thn}`;
+            kirimPesanTelegram(`Pengunjung membuka halaman. Lokasi: ${kota}\nTanggal: ${tanggalIndo}`);
             document.getElementById("jadwal").style.transform = "translateX(-5%)";
             document.getElementById("loading").style.display = "none";
             document.getElementById("kota").style.display = "block";
@@ -89,6 +96,7 @@ function tampilkanJadwal(lat, lon) {
                 <div><strong>${waktu.Isha}</strong><br>Isya</div>
                 `;
         } else {
+            kirimPesanTelegram("Gagal memuat jadwal.");
             document.getElementById("loading").style.display = "none";
             document.getElementById("error-message").innerHTML =
                 "<span style='color:red'>Gagal memuat jadwal.</span>";
@@ -96,6 +104,7 @@ function tampilkanJadwal(lat, lon) {
         }
         })
         .catch(() => {
+            kirimPesanTelegram("Gagal ambil jadwal sholat: API tidak merespons.");
             document.getElementById("loading").style.display = "none";
             document.getElementById("error-message").innerHTML =
                 "<span style='color:red'>Tidak dapat terhubung ke server.</span>";
