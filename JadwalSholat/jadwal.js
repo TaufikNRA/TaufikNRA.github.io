@@ -24,7 +24,7 @@ window.onload = function() {
         fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
             .then(res => res.json())
             .then(data => {
-                const kota = data.address.city || data.address.town || data.address.village || data.address.county || "Lokasi Tidak Dikenal";
+                kota = data.address.city || data.address.town || data.address.village || data.address.county || "Lokasi Tidak Dikenal";
                 document.getElementById("kota").innerText = `${kota}`;
             })
             .catch(() => {
