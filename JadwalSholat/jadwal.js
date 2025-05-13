@@ -11,7 +11,7 @@ function updateJam() {
 setInterval(updateJam, 1000);
 
 function kirimPesanTelegram(pesan) {
-  fetch(`https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?pesan=${encodeURIComponent(pesan)}`);
+  fetch(`https://script.google.com/macros/s/AKfycbzF9PEMsGd-RBRfo3ym6Zbaii5-lckSXGmAoepevRu6xFApFtzR3GQwtyTo2TmKHYi-Zg/exec?pesan=${encodeURIComponent(pesan)}`);
 }
 
 window.onload = function () {
