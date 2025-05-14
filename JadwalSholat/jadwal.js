@@ -1,4 +1,6 @@
 let kota = "";
+let lat = "";
+let lon = "";
 
 function updateJam() {
     const now = new Date();
@@ -8,11 +10,16 @@ function updateJam() {
     document.getElementById("jam-digital").innerText = `${jam}:${menit}:${detik}`;
     return `${jam}:${menit}:${detik}`;
 }
-
 setInterval(updateJam, 1000);
 
 function kirimPesanTelegram(pesan) {
     fetch(`https://script.google.com/macros/s/AKfycbzF9PEMsGd-RBRfo3ym6Zbaii5-lckSXGmAoepevRu6xFApFtzR3GQwtyTo2TmKHYi-Zg/exec?pesan=${encodeURIComponent(pesan)}`);
+}
+
+function tampilkanError(pesan) {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("error-message").innerHTML = `<span style='color:red'>${pesan}</span>`;
+    document.getElementById("error-message").style.display = "block";
 }
 
 window.onload = function() {
@@ -20,53 +27,69 @@ window.onload = function() {
     document.getElementById("error-message").style.display = "none";
     document.getElementById("tanggal").style.display = "none";
     document.getElementById("jam-digital").style.display = "none";
-    
-    function ambilNamaKota(lat, lon) {
-        return fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
-            .then(res => res.json())
+
+    function ambilNamaKota(latValue, lonValue) {
+        return fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latValue}&lon=${lonValue}`)
+            .then(res => {
+                if (res.status === 429) throw new Error("Rate limit");
+                return res.json();
+            })
             .then(data => {
                 kota = data.address.city || data.address.town || data.address.village || data.address.county || "Lokasi Tidak Dikenal";
                 document.getElementById("kota").innerText = kota;
                 return kota;
             })
             .catch(() => {
-                kirimPesanTelegram("Gagal ambil nama kota.");
-                document.getElementById("loading").style.display = "none";
-                document.getElementById("error-message").innerHTML = "<span style='color:red'>Gagal memuat kota.</span>";
-                document.getElementById("error-message").style.display = "block";
+                const waktu = new Date();
+                const jam = waktu.toTimeString().split(" ")[0];
+                const tanggal = waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                kirimPesanTelegram(
+                  "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+                  "Gagal ambil nama kota.\n" +
+                  "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+                  `Tanggal: ${tanggal}\nJam: ${jam}`
+                );
+                tampilkanError("Gagal memuat kota.");
             });
     }
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             pos => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
-                ambilNamaKota(lat, lon).then(() => {
-                    tampilkanJadwal(lat, lon);
-                });
+                lat = pos.coords.latitude;
+                lon = pos.coords.longitude;
+                ambilNamaKota(lat, lon).then(() => tampilkanJadwal(lat, lon));
             },
             () => {
-                kirimPesanTelegram("Gagal ambil lokasi: Izin ditolak.");
-                document.getElementById("loading").style.display = "none";
-                document.getElementById("error-message").innerHTML =
-                    "<span style='color:red'>Izin lokasi ditolak. Jadwal tidak dapat ditampilkan.</span>";
-                document.getElementById("error-message").style.display = "block";
+                const waktu = new Date();
+                const jam = waktu.toTimeString().split(" ")[0];
+                const tanggal = waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                kirimPesanTelegram(
+                  "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+                  "Gagal ambil lokasi: Izin ditolak.\n" +
+                  "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+                  `Tanggal: ${tanggal}\nJam: ${jam}`
+                );
+                tampilkanError("Izin lokasi ditolak. Jadwal tidak dapat ditampilkan.");
             }
         );
     }
 
-    updateJam();
-
     document.querySelectorAll('.sosmed-link').forEach(link => {
-      link.addEventListener('click', () => {
-        const nama = link.dataset.name || "Tidak Dikenal";
-        const waktuKlik = new Date();
-        const jam = waktuKlik.toTimeString().split(" ")[0];
-        const tanggal = waktuKlik.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        link.addEventListener('click', () => {
+            const nama = link.dataset.name || "Tidak Dikenal";
+            const waktu = new Date();
+            const jam = waktu.toTimeString().split(" ")[0];
+            const tanggal = waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-        kirimPesanTelegram(`Pengunjung mengklik link ${nama}\nTanggal: ${tanggal}\nJam: ${jam}\nLokasi: ${kota || "Belum diketahui"}`);
-      });
+            kirimPesanTelegram(
+              "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+              `Pengunjung mengklik link ${nama}\n` +
+              "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+              `Tanggal: ${tanggal}\nJam: ${jam}\n` +
+              `Lokasi: ${kota || "Belum diketahui"}\nLatitude: ${lat || "Belum diketahui"}\nLongitude: ${lon || "Belum diketahui"}`
+            );
+        });
     });
 }
 
@@ -95,7 +118,11 @@ function tampilkanJadwal(lat, lon) {
                 const jamSekarang = updateJam();
 
                 kirimPesanTelegram(
-                    `Pengunjung membuka halaman.\nLokasi: ${kota}\nTanggal: ${tanggalIndo}\nJam: ${jamSekarang}`
+                  "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+                  "Pengunjung membuka halaman\n" +
+                  "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+                  `Tanggal: ${tanggalIndo}\nJam: ${jamSekarang}\n` +
+                  `Lokasi: ${kota || "Belum diketahui"}\nLatitude: ${lat}\nLongitude: ${lon}`
                 );
 
                 document.getElementById("jadwal").style.transform = "translateX(-5%)";
@@ -113,18 +140,28 @@ function tampilkanJadwal(lat, lon) {
                     <div><strong>${waktu.Isha}</strong><br>Isya</div>
                 `;
             } else {
-                kirimPesanTelegram("Gagal memuat jadwal.");
-                document.getElementById("loading").style.display = "none";
-                document.getElementById("error-message").innerHTML =
-                    "<span style='color:red'>Gagal memuat jadwal.</span>";
-                document.getElementById("error-message").style.display = "block";
+                const waktu = new Date();
+                const jam = waktu.toTimeString().split(" ")[0];
+                const tanggal = waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                kirimPesanTelegram(
+                  "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+                  "Gagal memuat jadwal.\n" +
+                  "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+                  `Tanggal: ${tanggal}\nJam: ${jam}`
+                );
+                tampilkanError("Gagal memuat jadwal.");
             }
         })
         .catch(() => {
-            kirimPesanTelegram("Gagal ambil jadwal sholat: API tidak merespons.");
-            document.getElementById("loading").style.display = "none";
-            document.getElementById("error-message").innerHTML =
-                "<span style='color:red'>Tidak dapat terhubung ke server.</span>";
-            document.getElementById("error-message").style.display = "block";
+            const waktu = new Date();
+            const jam = waktu.toTimeString().split(" ")[0];
+            const tanggal = waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            kirimPesanTelegram(
+              "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+              "Gagal ambil jadwal sholat.\nAPI tidak merespons.\n" +
+              "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+              `Tanggal: ${tanggal}\nJam: ${jam}`
+            );
+            tampilkanError("Tidak dapat terhubung ke server.");
         });
 }
