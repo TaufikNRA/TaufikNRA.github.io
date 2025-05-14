@@ -56,8 +56,8 @@ window.onload = function() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             pos => {
-                lat = pos.coords.latitude;
-                lon = pos.coords.longitude;
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
                 ambilNamaKota(lat, lon).then(() => tampilkanJadwal(lat, lon));
             },
             () => {
