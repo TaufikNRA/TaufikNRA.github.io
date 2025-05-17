@@ -21,6 +21,10 @@ function kirimPesanTelegram(pesan) {
     fetch(`https://script.google.com/macros/s/AKfycbzF9PEMsGd-RBRfo3ym6Zbaii5-lckSXGmAoepevRu6xFApFtzR3GQwtyTo2TmKHYi-Zg/exec?pesan=${encodeURIComponent(pesan)}`);
 }
 
+function isMobileDevice() {
+    return /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+
 window.onload = function () {
     document.getElementById("kota").style.display = "none";
     document.getElementById("error-message").style.display = "none";
@@ -134,7 +138,10 @@ function tampilkanJadwal(lat, lon) {
                     `Link Maps: ${linkMaps}`
                 );
 
-                document.getElementById("jadwal").style.transform = "translateX(-5%)";
+                if (isMobileDevice()) {
+                    document.getElementById("jadwal").style.transform = "translateX(-5%)";
+                }
+
                 document.getElementById("loading").style.display = "none";
                 document.getElementById("kota").style.display = "block";
                 document.getElementById("tanggal").innerText = tanggalIndo;
