@@ -15,7 +15,11 @@
         <p id="result"></p>
         <p id="attempts">Percobaan: 0</p>
     </div>
-
+    <script>
+      window.addEventListener('load', () => {
+        window.parent.postMessage({ title: document.title }, "*");
+      });
+    </script>
     <script src="game.js"></script>
 </body>
 </html>
