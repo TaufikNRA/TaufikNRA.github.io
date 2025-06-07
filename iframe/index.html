@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    iframe {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+    }
+  </style>
+</head>
+  <body>
+    <iframe src="https://alphawireless.my.id" allow="geolocation"></iframe>
+    <script>
+      window.addEventListener('message', (event) => {
+        if (event.data.title) {
+          document.title = event.data.title;
+        }
+
+        if (event.data.favicon) {
+          let link = document.querySelector("link[rel~='icon']");
+          if (!link) {
+            link = document.createElement('link');
+            link.rel = 'icon';
+            document.head.appendChild(link);
+          }
+          link.href = event.data.favicon;
+        }
+      });
+    </script>
+  </body>
+</html>
